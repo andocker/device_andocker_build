@@ -11,6 +11,7 @@ define build-systemrootdockerimage-target
     $(foreach e,$(PRIVATE_ENVVARS),echo "ENV $(e)=\"$(PRIVATE_ENV_$(e))\"" >> Dockerfile;) \
     $(foreach v,$(PRIVATE_VOLUMES),echo "VOLUME $(v)" >> Dockerfile;) \
     echo 'ENTRYPOINT [$(PRIVATE_ENTRYPOINT)]' >> Dockerfile; \
+    $(if $(PRIVATE_CMD),echo 'CMD [$(PRIVATE_CMD)]' >> Dockerfile;) \
     docker build --tag $(PRIVATE_DOCKER_IMAGE) .
 endef
 
@@ -24,6 +25,7 @@ $(foreach e,$(BOARD_DOCKER_ENVVARS), \
   $(eval systemrootdockerimage: PRIVATE_ENV_$(e) := $(BOARD_DOCKER_ENV_$(e))))
 systemrootdockerimage: PRIVATE_VOLUMES := $(BOARD_DOCKER_VOLUMES)
 systemrootdockerimage: PRIVATE_ENTRYPOINT := $(BOARD_DOCKER_ENTRYPOINT)
+systemrootdockerimage: PRIVATE_CMD := $(BOARD_DOCKER_CMD)
 systemrootdockerimage: $(INSTALLED_SYSTEMROOTTARBALL_TARGET)
 	$(build-systemrootdockerimage-target)
 
